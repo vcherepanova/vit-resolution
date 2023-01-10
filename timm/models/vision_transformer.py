@@ -402,6 +402,69 @@ class VisionTransformer(nn.Module):
         return x
 
 
+class PEG(nn.Module):
+    """
+    reshape embedding into a 2d grid, apply convolution, and then add the results back into the original embedding
+    """
+    def __init__(self, grid_size, c, pos_drop, embed_contains_token=False):
+        # initialize convolutional kernel
+        super().__init__()
+        self.conv = nn.Conv2d(c, c, 3, padding=1)
+        self.grid_size = grid_size
+        self.embed_contains_token=embed_contains_token
+        self.pos_drop = pos_drop
+    def forward(self, x, cls_token=None, pos_drop=None):
+        # need to remove the classification token if it exists
+        b, n, c = x.shape
+        # need to remove the classification token if it exists
+        if self.embed_contains_token:
+            token_embed = x[:, :1]
+            embed_2d = x[:, 1:].reshape(b, self.grid_size[0], self.grid_size[1], c).permute(0, 3, 1, 2)
+        else:
+            embed_2d = x.reshape(b, self.grid_size[0], self.grid_size[1], c).permute(0, 3, 1, 2)
+        
+        pos_encoding = self.conv(embed_2d)
+        embed_2d += pos_encoding
+
+        if self.embed_contains_token:
+            x = embed_2d.permute(0, 2, 3, 1).reshape(b, n-1, c)
+            x = torch.cat((token_embed, x), dim=1)
+        else:
+            x = embed_2d.permute(0, 2, 3, 1).reshape(b, n, c)
+        
+
+        if cls_token is not None:
+            x = torch.cat((cls_token.expand(x.shape[0], -1, -1), x), dim=1)
+        
+        return self.pos_drop(x)
+
+class VisionTransformerPEG(VisionTransformer):
+    def __init__(self, peg_idxs, **kwargs):
+        super().__init__(**kwargs)
+        # initialize PEGs
+        self.pegs = nn.ModuleDict()
+        self.peg_idxs = peg_idxs
+        grid_size = self.patch_embed.grid_size
+        for peg_idx in peg_idxs:
+            if peg_idx > -1:
+                self.pegs[str(peg_idx)] = PEG(grid_size, self.embed_dim, self.pos_drop, embed_contains_token=self.cls_token is not None)
+                self.blocks[peg_idx] = nn.Sequential(self.blocks[peg_idx], self.pegs[str(peg_idx)])
+            else:
+                self.pegs[str(peg_idx)] = PEG(grid_size, self.embed_dim, self.pos_drop, embed_contains_token=False)
+                
+    def forward_feature(self, x):
+        x = self.patch_embed(x)
+        if -1 in self.peg_ids:
+            x = self.pegs[-1](x, cls_token=self.cls_token)
+        x = self.norm_pre(x)
+        if self.grad_checkpointing and not torch.jit.is_scripting():
+            x = checkpoint_seq(self.blocks, x)
+        else:
+            x = self.blocks(x)
+        x = self.norm(x)
+        return x
+
+
 def init_weights_vit_timm(module: nn.Module, name: str = ''):
     """ ViT weight initialization, original timm impl (for reproducibility) """
     if isinstance(module, nn.Linear):

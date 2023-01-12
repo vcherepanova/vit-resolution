@@ -1,2 +1,0 @@
-epoch,train_loss,eval_loss,eval_top1,eval_top5,lr
-0,2.390929532946824,0.914276524734497,76.28,93.502,1e-05

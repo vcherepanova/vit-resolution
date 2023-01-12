@@ -74,6 +74,7 @@ def create_model(
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
     model_source, model_name = parse_model_name(model_name)
+
     if model_source == 'hf-hub':
         assert not pretrained_cfg, 'pretrained_cfg should not be set when sourcing model from Hugging Face Hub.'
         # For model names specified in the form `hf-hub:path/architecture_name@revision`,

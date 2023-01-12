@@ -61,7 +61,7 @@ class CheckpointSaver:
         assert self.max_history >= 1
 
     def save_checkpoint(self, epoch, metric=None):
-        assert epoch >= 0
+        # assert epoch >= 0
         tmp_save_path = os.path.join(self.checkpoint_dir, 'tmp' + self.extension)
         last_save_path = os.path.join(self.checkpoint_dir, 'last' + self.extension)
         self._save(tmp_save_path, epoch, metric)

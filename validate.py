@@ -189,6 +189,8 @@ def validate(args):
         global_pool=args.gp,
         scriptable=args.torchscript,
     )
+    # model.load_pretrained('Ti_16-i21k-300ep-lr_0.001-aug_none-wd_0.03-do_0.0-sd_0.0--imagenet2012-steps_20k-lr_0.03-res_224.npz')
+
     if args.num_classes is None:
         assert hasattr(model, 'num_classes'), 'Model must have `num_classes` attr if not set on cmd line/config.'
         args.num_classes = model.num_classes

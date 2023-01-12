@@ -345,6 +345,10 @@ group.add_argument('--use-multi-epochs-loader', action='store_true', default=Fal
 group.add_argument('--log-wandb', action='store_true', default=False,
                     help='log training and validation metrics to wandb')
 
+# ViT resolution 
+group = parser.add_argument_group('ViT resolution')
+group.add_argument('--diff-res-ckpt', type=str, default='',
+                    help='checkpoint pretrained on a different resolution')
 
 def _parse_args():
     # Do we have a config file to parse?
@@ -433,6 +437,10 @@ def main():
         scriptable=args.torchscript,
         checkpoint_path=args.initial_checkpoint,
     )
+    if args.diff_res_ckpt :
+        _logger.info(f'Loading a checkpoint pretrained on a different resolution, checkpoint path: {args.diff_res_ckpt}')
+        model.load_pretrained(args.diff_res_ckpt)
+
     if args.num_classes is None:
         assert hasattr(model, 'num_classes'), 'Model must have `num_classes` attr if not set on cmd line/config.'
         args.num_classes = model.num_classes  # FIXME handle model default vs config num_classes more elegantly

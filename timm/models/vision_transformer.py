@@ -556,6 +556,7 @@ def _load_weights(model: VisionTransformer, checkpoint_path: str, prefix: str = 
     """
     import numpy as np
 
+
     def _n2p(w, t=True):
         if w.ndim == 4 and w.shape[0] == w.shape[1] == w.shape[2] == 1:
             w = w.flatten()
@@ -603,7 +604,9 @@ def _load_weights(model: VisionTransformer, checkpoint_path: str, prefix: str = 
     else:
         embed_conv_w = adapt_input_conv(
             model.patch_embed.proj.weight.shape[1], _n2p(w[f'{prefix}embedding/kernel']))
+
     if embed_conv_w.shape[-2:] != model.patch_embed.proj.weight.shape[-2:]:
+
         embed_conv_w = resample_patch_embed(
             embed_conv_w,
             model.patch_embed.proj.weight.shape[-2:],
@@ -620,6 +623,8 @@ def _load_weights(model: VisionTransformer, checkpoint_path: str, prefix: str = 
         pos_embed_w = _n2p(w[f'{prefix}pos_embedding'], t=False)
     else:
         pos_embed_w = _n2p(w[f'{prefix}Transformer/posembed_input/pos_embedding'], t=False)
+    
+
     if pos_embed_w.shape != model.pos_embed.shape:
         old_shape = pos_embed_w.shape
         num_prefix_tokens = 0 if getattr(model, 'no_embed_class', False) else getattr(model, 'num_prefix_tokens', 1)
@@ -632,6 +637,8 @@ def _load_weights(model: VisionTransformer, checkpoint_path: str, prefix: str = 
             verbose=True,
         )
     model.pos_embed.copy_(pos_embed_w)
+
+
     model.norm.weight.copy_(_n2p(w[f'{prefix}Transformer/encoder_norm/scale']))
     model.norm.bias.copy_(_n2p(w[f'{prefix}Transformer/encoder_norm/bias']))
     if isinstance(model.head, nn.Linear) and model.head.bias.shape[0] == w[f'{prefix}head/bias'].shape[-1]:
@@ -1217,6 +1224,7 @@ def vit_tiny_patch16_224(pretrained=False, **kwargs):
     """
     model_kwargs = dict(patch_size=16, embed_dim=192, depth=12, num_heads=3, **kwargs)
     model = _create_vision_transformer('vit_tiny_patch16_224', pretrained=pretrained, **model_kwargs)
+
     return model
 
 

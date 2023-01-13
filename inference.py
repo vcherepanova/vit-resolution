@@ -142,6 +142,10 @@ parser.add_argument('--output-type', default='prob',
 parser.add_argument('--exclude-output', action='store_true', default=False,
                     help='exclude logits/probs from results, just indices. topk must be set !=0.')
 
+# ViT resolution 
+parser.add_argument('--diff-res-ckpt', type=str, default='',
+                    help='checkpoint pretrained on a different resolution')
+
 
 def main():
     setup_default_logging()
@@ -177,6 +181,11 @@ def main():
         pretrained=args.pretrained,
         checkpoint_path=args.checkpoint,
     )
+
+    if args.diff_res_ckpt :
+        _logger.info(f'Loading a checkpoint pretrained on a different resolution, checkpoint path: {args.diff_res_ckpt}')
+        model.load_pretrained(args.diff_res_ckpt)
+
     if args.num_classes is None:
         assert hasattr(model, 'num_classes'), 'Model must have `num_classes` attr if not set on cmd line/config.'
         args.num_classes = model.num_classes

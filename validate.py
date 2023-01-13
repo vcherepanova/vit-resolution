@@ -143,6 +143,10 @@ parser.add_argument('--valid-labels', default='', type=str, metavar='FILENAME',
 parser.add_argument('--retry', default=False, action='store_true',
                     help='Enable batch size decay & retry for single model validation')
 
+# ViT resolution 
+parser.add_argument('--diff-res-ckpt', type=str, default='',
+                    help='checkpoint pretrained on a different resolution')
+
 
 def validate(args):
     # might as well try to validate something
@@ -189,7 +193,9 @@ def validate(args):
         global_pool=args.gp,
         scriptable=args.torchscript,
     )
-    # model.load_pretrained('Ti_16-i21k-300ep-lr_0.001-aug_none-wd_0.03-do_0.0-sd_0.0--imagenet2012-steps_20k-lr_0.03-res_224.npz')
+    if args.diff_res_ckpt :
+        _logger.info(f'Loading a checkpoint pretrained on a different resolution, checkpoint path: {args.diff_res_ckpt}')
+        model.load_pretrained(args.diff_res_ckpt)
 
     if args.num_classes is None:
         assert hasattr(model, 'num_classes'), 'Model must have `num_classes` attr if not set on cmd line/config.'

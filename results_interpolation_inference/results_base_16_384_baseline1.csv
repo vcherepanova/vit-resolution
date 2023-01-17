@@ -1,0 +1,2 @@
+model,top1,top1_err,top5,top5_err,param_count,img_size,crop_pct,interpolation,checkpoint,interpolation_res
+vit_base_patch16_384,81.1,18.9,95.328,4.672,86.86,384,1.0,bicubic,pretrained/B_16-i1k-300ep-lr_0.001-aug_strong2-wd_0.1-do_0.1-sd_0.1--imagenet2012-steps_20k-lr_0.01-res_384.npz,bilinear

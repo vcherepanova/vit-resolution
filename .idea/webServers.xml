@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="2fe740d1-38b9-4e9d-a28a-5105e014e860" name="cml">
+        <fileTransfer accessType="SFTP" host="cmlsub00.umiacs.umd.edu" port="22" sshConfigId="355fc6d9-ab30-497d-9538-a8529b9ab7d2" sshConfig="vcherepa@cmlsub00.umiacs.umd.edu:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

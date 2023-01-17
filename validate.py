@@ -123,6 +123,8 @@ parser.add_argument('--fuser', default='', type=str,
                     help="Select jit fuser. One of ('', 'te', 'old', 'nvfuser')")
 parser.add_argument('--fast-norm', default=False, action='store_true',
                     help='enable experimental fast-norm')
+parser.add_argument('--interpolation_res', default='bilinear',
+                     help='enable experimental fast-norm')
 
 scripting_group = parser.add_mutually_exclusive_group()
 scripting_group.add_argument('--torchscript', default=False, action='store_true',
@@ -132,13 +134,13 @@ scripting_group.add_argument('--torchcompile', nargs='?', type=str, default=None
 scripting_group.add_argument('--aot-autograd', default=False, action='store_true',
                              help="Enable AOT Autograd support.")
 
-parser.add_argument('--results-file', default='', type=str, metavar='FILENAME',
+parser.add_argument('--results_file', default='', type=str, metavar='FILENAME',
                     help='Output csv file for validation results (summary)')
-parser.add_argument('--results-format', default='csv', type=str,
+parser.add_argument('--results_format', default='csv', type=str,
                     help='Format for results file one of (csv, json) (default: csv).')
-parser.add_argument('--real-labels', default='', type=str, metavar='FILENAME',
+parser.add_argument('--real_labels', default='', type=str, metavar='FILENAME',
                     help='Real labels JSON file for imagenet evaluation')
-parser.add_argument('--valid-labels', default='', type=str, metavar='FILENAME',
+parser.add_argument('--valid_labels', default='', type=str, metavar='FILENAME',
                     help='Valid label indices txt file for validation of partial label space')
 parser.add_argument('--retry', default=False, action='store_true',
                     help='Enable batch size decay & retry for single model validation')
@@ -193,9 +195,11 @@ def validate(args):
         global_pool=args.gp,
         scriptable=args.torchscript,
     )
+    print(model.pos_embed.shape)
+    print(model.patch_embed.patch_size)
     if args.diff_res_ckpt :
         _logger.info(f'Loading a checkpoint pretrained on a different resolution, checkpoint path: {args.diff_res_ckpt}')
-        model.load_pretrained(args.diff_res_ckpt)
+        model.load_pretrained(args.diff_res_ckpt, interpolation=args.interpolation_res)
 
     if args.num_classes is None:
         assert hasattr(model, 'num_classes'), 'Model must have `num_classes` attr if not set on cmd line/config.'
@@ -351,6 +355,8 @@ def validate(args):
         img_size=data_config['input_size'][-1],
         crop_pct=crop_pct,
         interpolation=data_config['interpolation'],
+        checkpoint=args.diff_res_ckpt,
+        interpolation_res=args.interpolation_res,
     )
 
     _logger.info(' * Acc@1 {:.3f} ({:.3f}) Acc@5 {:.3f} ({:.3f})'.format(
@@ -422,6 +428,10 @@ def main():
                     continue
                 if args.checkpoint:
                     r['checkpoint'] = args.checkpoint
+                if args.diff_res_ckpt:
+                    r['checkpoint'] = args.diff_res_ckpt
+                if args.interpolation_res:
+                    r['interpolation_res'] = args.interpolation_res
                 results.append(r)
         except KeyboardInterrupt as e:
             pass

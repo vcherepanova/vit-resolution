@@ -322,6 +322,9 @@ class VisionTransformer(nn.Module):
         if weight_init != 'skip':
             self.init_weights(weight_init)
 
+    def reset_pos_emb(self) :
+        trunc_normal_(self.pos_embed, std=.02)
+
     def init_weights(self, mode=''):
         assert mode in ('jax', 'jax_nlhb', 'moco', '')
         head_bias = -math.log(self.num_classes) if 'nlhb' in mode else 0.
@@ -850,6 +853,8 @@ default_cfgs = generate_default_cfgs({
         url='https://storage.googleapis.com/vit_models/augreg/S_16-i1k-300ep-lr_0.001-aug_medium2-wd_0.1-do_0.0-sd_0.0--imagenet2012-steps_20k-lr_0.01-res_384.npz',
         hf_hub_id='timm/',
         custom_load=True, input_size=(3, 384, 384), crop_pct=1.0),
+    'vit_tiny_patch16_64.augreg_in1k': _cfg(url='', input_size=(3, 64, 64), crop_pct=1.0),
+    'vit_small_patch16_64.augreg_in1k': _cfg(url='', input_size=(3, 64, 64), crop_pct=1.0),
     'vit_base_patch32_224.augreg_in1k': _cfg(
         url='https://storage.googleapis.com/vit_models/augreg/B_32-i1k-300ep-lr_0.001-aug_medium2-wd_0.1-do_0.1-sd_0.1--imagenet2012-steps_20k-lr_0.01-res_224.npz',
         hf_hub_id='timm/',
@@ -1670,4 +1675,21 @@ def flexivit_large(pretrained=False, **kwargs):
     """
     model_kwargs = dict(patch_size=16, embed_dim=1024, depth=24, num_heads=16, no_embed_class=True, **kwargs)
     model = _create_vision_transformer('flexivit_large', pretrained=pretrained, **model_kwargs)
+    return model
+
+@register_model
+def vit_tiny_patch16_64(pretrained=False, **kwargs):
+    """ ViT-Tiny (Vit-Ti/16)
+    """
+    model_kwargs = dict(patch_size=16, embed_dim=192, depth=12, num_heads=3, **kwargs)
+    model = _create_vision_transformer('vit_tiny_patch16_64', pretrained=pretrained, **model_kwargs)
+
+    return model
+
+@register_model
+def vit_small_patch16_64(pretrained=False, **kwargs):
+    """ ViT-Small (ViT-S/16)
+    """
+    model_kwargs = dict(patch_size=16, embed_dim=384, depth=12, num_heads=6, **kwargs)
+    model = _create_vision_transformer('vit_small_patch16_64', pretrained=pretrained, **model_kwargs)
     return model

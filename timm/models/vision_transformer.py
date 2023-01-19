@@ -335,8 +335,8 @@ class VisionTransformer(nn.Module):
         init_weights_vit_timm(m)
 
     @torch.jit.ignore()
-    def load_pretrained(self, checkpoint_path, prefix=''):
-        _load_weights(self, checkpoint_path, prefix)
+    def load_pretrained(self, checkpoint_path, prefix='', interpolation='bilinear'):
+        _load_weights(self, checkpoint_path, prefix, interpolation)
 
     @torch.jit.ignore
     def no_weight_decay(self):
@@ -551,7 +551,7 @@ def resize_pos_embed(
 
 
 @torch.no_grad()
-def _load_weights(model: VisionTransformer, checkpoint_path: str, prefix: str = ''):
+def _load_weights(model: VisionTransformer, checkpoint_path: str, prefix: str = '', interpolation: str = 'bilinear'):
     """ Load weights from .npz checkpoints for official Google Brain Flax implementation
     """
     import numpy as np
@@ -570,7 +570,7 @@ def _load_weights(model: VisionTransformer, checkpoint_path: str, prefix: str = 
         return torch.from_numpy(w)
 
     w = np.load(checkpoint_path)
-    interpolation = 'bilinear'
+    # interpolation = 'bilinear'
     antialias = False
     big_vision = False
     if not prefix:
@@ -607,6 +607,7 @@ def _load_weights(model: VisionTransformer, checkpoint_path: str, prefix: str = 
 
     if embed_conv_w.shape[-2:] != model.patch_embed.proj.weight.shape[-2:]:
 
+        print('Using %s interpolation for patch embeddings'%interpolation)
         embed_conv_w = resample_patch_embed(
             embed_conv_w,
             model.patch_embed.proj.weight.shape[-2:],
@@ -626,6 +627,7 @@ def _load_weights(model: VisionTransformer, checkpoint_path: str, prefix: str = 
     
 
     if pos_embed_w.shape != model.pos_embed.shape:
+        print('Using %s interpolation for pos embeddings'%interpolation)
         old_shape = pos_embed_w.shape
         num_prefix_tokens = 0 if getattr(model, 'no_embed_class', False) else getattr(model, 'num_prefix_tokens', 1)
         pos_embed_w = resample_abs_pos_embed(  # resize pos embedding when different size from pretrained weights

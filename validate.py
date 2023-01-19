@@ -146,6 +146,8 @@ parser.add_argument('--retry', default=False, action='store_true',
 # ViT resolution 
 parser.add_argument('--diff-res-ckpt', type=str, default='',
                     help='checkpoint pretrained on a different resolution')
+parser.add_argument('--weight-interpolation', type=str, default='bilinear',
+                    help='interpolation method for checkpoint pretrained on a different resolution')
 
 
 def validate(args):
@@ -195,7 +197,7 @@ def validate(args):
     )
     if args.diff_res_ckpt :
         _logger.info(f'Loading a checkpoint pretrained on a different resolution, checkpoint path: {args.diff_res_ckpt}')
-        model.load_pretrained(args.diff_res_ckpt)
+        model.load_pretrained(args.diff_res_ckpt, interpolation=args.weight_interpolation)
 
     if args.num_classes is None:
         assert hasattr(model, 'num_classes'), 'Model must have `num_classes` attr if not set on cmd line/config.'

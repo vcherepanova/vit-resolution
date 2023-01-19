@@ -427,7 +427,7 @@ class PEG(nn.Module):
             embed_2d = x.reshape(b, self.grid_size[0], self.grid_size[1], c).permute(0, 3, 1, 2)
         
         pos_encoding = self.conv(embed_2d)
-        embed_2d += pos_encoding
+        embed_2d = embed_2d + pos_encoding
 
         if self.embed_contains_token:
             x = embed_2d.permute(0, 2, 3, 1).reshape(b, n-1, c)
@@ -853,8 +853,11 @@ default_cfgs = generate_default_cfgs({
         url='https://storage.googleapis.com/vit_models/augreg/S_16-i1k-300ep-lr_0.001-aug_medium2-wd_0.1-do_0.0-sd_0.0--imagenet2012-steps_20k-lr_0.01-res_384.npz',
         hf_hub_id='timm/',
         custom_load=True, input_size=(3, 384, 384), crop_pct=1.0),
+    # newly added configs for 64x64 images
     'vit_tiny_patch16_64.augreg_in1k': _cfg(url='', input_size=(3, 64, 64), crop_pct=1.0),
     'vit_small_patch16_64.augreg_in1k': _cfg(url='', input_size=(3, 64, 64), crop_pct=1.0),
+    'vitpeg_small_patch16_64.augreg_in1k': _cfg(url='', input_size=(3, 64, 64), crop_pct=1.0),
+    'vitpeg_tiny_patch16_64.augreg_in1k': _cfg(url='', input_size=(3, 64, 64), crop_pct=1.0),
     'vit_base_patch32_224.augreg_in1k': _cfg(
         url='https://storage.googleapis.com/vit_models/augreg/B_32-i1k-300ep-lr_0.001-aug_medium2-wd_0.1-do_0.1-sd_0.1--imagenet2012-steps_20k-lr_0.01-res_224.npz',
         hf_hub_id='timm/',
@@ -1216,11 +1219,18 @@ def _create_vision_transformer(variant, pretrained=False, **kwargs):
     else:
         _filter_fn = checkpoint_filter_fn
 
-    return build_model_with_cfg(
-        VisionTransformer, variant, pretrained,
-        pretrained_filter_fn=_filter_fn,
-        **kwargs,
-    )
+    if 'peg' in variant:
+        return build_model_with_cfg(
+            VisionTransformerPEG, variant, pretrained,
+            pretrained_filter_fn=_filter_fn,
+            **kwargs,
+        )
+    else:
+        return build_model_with_cfg(
+            VisionTransformer, variant, pretrained,
+            pretrained_filter_fn=_filter_fn,
+            **kwargs,
+        )
 
 
 @register_model
@@ -1692,4 +1702,26 @@ def vit_small_patch16_64(pretrained=False, **kwargs):
     """
     model_kwargs = dict(patch_size=16, embed_dim=384, depth=12, num_heads=6, **kwargs)
     model = _create_vision_transformer('vit_small_patch16_64', pretrained=pretrained, **model_kwargs)
+    return model
+
+@register_model
+def vitpeg_tiny_patch16_64(pretrained=False, **kwargs):
+    """ ViT-Tiny (Vit-Ti/16) with positional encoding generator (peg)
+    """
+    if pretrained:
+        raise ValueError("pretrained argument is not supported for peg models")
+    model_kwargs = dict(peg_idxs=[0,1,2,3,4], patch_size=16, embed_dim=192, depth=12, num_heads=3, **kwargs)
+    model = _create_vision_transformer('vitpeg_tiny_patch16_64', pretrained=pretrained, **model_kwargs)
+    return model
+
+
+@register_model
+def vitpeg_small_patch16_64(pretrained=False, **kwargs):
+    """ ViT-Small (Vit-S/16) with positional encoding generator (peg)
+    """
+    if pretrained:
+        
+        raise ValueError("pretrained argument is not supported for peg models")
+    model_kwargs = dict(peg_idxs=[0,1,2,3,4], patch_size=16, embed_dim=384, depth=12, num_heads=6, **kwargs)
+    model = _create_vision_transformer('vitpeg_tiny_patch16_64', pretrained=pretrained, **model_kwargs)
     return model

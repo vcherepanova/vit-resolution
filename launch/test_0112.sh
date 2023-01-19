@@ -1,7 +1,10 @@
-./distributed_train.sh 2 /fs/cml-datasets/ImageNet/ILSVRC2012 --model vit_tiny_patch16_384 --pretrained  --img-size 384 --sched cosine --epochs 150 --lr 1e-2 --batch-size 64 --diff-res-ckpt 'Ti_16-i21k-300ep-lr_0.001-aug_none-wd_0.03-do_0.0-sd_0.0--imagenet2012-steps_20k-lr_0.03-res_224.npz'
+# Fine tune
 
-./distributed_train.sh 1 /fs/cml-datasets/ImageNet/ILSVRC2012 --model vit_tiny_patch16_384 --pretrained  --img-size 384 --sched cosine --epochs 150 --lr 1e-2 --batch-size 256 --diff-res-ckpt 'Ti_16-i21k-300ep-lr_0.001-aug_none-wd_0.03-do_0.0-sd_0.0--imagenet2012-steps_20k-lr_0.03-res_224.npz' --workers 4
+./distributed_train.sh 2 /fs/cml-datasets/ImageNet/ILSVRC2012 --model vit_small_patch16_384.augreg_in1k --pretrained  --img-size 384 --sched cosine --epochs 4 --lr 1e-2 --batch-size 128 --workers 8 --clip-grad 1 --weight-decay 0.0 --warmup-epochs 0 --diff-res-ckpt 'S_16-i1k-300ep-lr_0.001-aug_medium2-wd_0.1-do_0.0-sd_0.0--imagenet2012-steps_20k-lr_0.01-res_224.npz'
+
+# small resolution trained from scratch
+./distributed_train.sh 4 /fs/cml-datasets/ImageNet/ILSVRC2012 --model vit_tiny_patch16_64  --img-size 64 --epochs 4 --lr 1e-2  --workers 16
 
 python validate.py /fs/cml-datasets/ImageNet/ILSVRC2012 --model vit_tiny_patch16_384 --pretrained --img-size 384
 
-# --clip-grad 1 --batch-size 512 --weight-decay 0.0
+#   --diff-res-ckpt

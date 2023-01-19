@@ -439,7 +439,8 @@ def main():
     )
     if args.diff_res_ckpt :
         _logger.info(f'Loading a checkpoint pretrained on a different resolution, checkpoint path: {args.diff_res_ckpt}')
-        model.load_pretrained(args.diff_res_ckpt)
+        # model.load_pretrained(args.diff_res_ckpt)
+        model.reset_pos_emb()
 
     if args.num_classes is None:
         assert hasattr(model, 'num_classes'), 'Model must have `num_classes` attr if not set on cmd line/config.'

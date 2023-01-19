@@ -148,6 +148,8 @@ parser.add_argument('--retry', default=False, action='store_true',
 # ViT resolution 
 parser.add_argument('--diff-res-ckpt', type=str, default='',
                     help='checkpoint pretrained on a different resolution')
+parser.add_argument('--weight-interpolation', type=str, default='bilinear',
+                    help='interpolation method for checkpoint pretrained on a different resolution')
 
 
 def validate(args):

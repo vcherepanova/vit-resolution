@@ -13,3 +13,4 @@ from .model import unwrap_model, get_state_dict, freeze, unfreeze
 from .model_ema import ModelEma, ModelEmaV2
 from .random import random_seed
 from .summary import update_summary, get_outdir
+from .irpe import build_rpe, get_rpe_config

@@ -553,6 +553,7 @@ class VisionTransformerRPE(nn.Module):
                  num_heads=12, mlp_ratio=4., qkv_bias=False, qk_scale=None, drop_rate=0., attn_drop_rate=0.,
                  drop_path_rate=0., hybrid_backbone=None, norm_layer=nn.LayerNorm, rpe_config=None):
         super().__init__()
+
         self.num_classes = num_classes
         self.num_features = self.embed_dim = embed_dim  # num_features for consistency with other models
 
@@ -1860,7 +1861,7 @@ def vit_small_patch16_64(pretrained=False, **kwargs):
 @register_model
 def deit_small_patch16_224(pretrained=False, **kwargs):
     model = VisionTransformerRPE(
-        patch_size=16, embed_dim=384, depth=12, num_heads=6, mlp_ratio=4, qkv_bias=True,
+        img_size=224, patch_size=16, embed_dim=384, depth=12, num_heads=6, mlp_ratio=4, qkv_bias=True,
         norm_layer=partial(nn.LayerNorm, eps=1e-6), **kwargs)
     model.default_cfg = _cfg()
     if pretrained:
@@ -1869,6 +1870,18 @@ def deit_small_patch16_224(pretrained=False, **kwargs):
             map_location="cpu", check_hash=True
         )
         model.load_state_dict(checkpoint["model"])
+    return model
+
+@register_model
+def deit_small_patch16_64(pretrained=False, **kwargs):
+    """ Deit-small
+    """
+    model = VisionTransformerRPE(
+        img_size=64, patch_size=16, embed_dim=384, depth=12, num_heads=6, mlp_ratio=4, qkv_bias=True,
+        norm_layer=partial(nn.LayerNorm, eps=1e-6), **kwargs)
+    model.default_cfg = _cfg()
+    if pretrained:
+        raise NotImplemented('No pretrained checkpoints for DeiT-64')
     return model
 
 
@@ -1998,6 +2011,22 @@ def deit_small_patch16_224_ctx_product_50_shared_qkv(pretrained=False, **kwargs)
         rpe_on='qkv',
     )
     return deit_small_patch16_224(pretrained=pretrained,
+                                  rpe_config=rpe_config,
+                                  **kwargs)
+
+
+@register_rpe_model
+def deit_small_patch16_64_ctx_product_50_shared_qkv(pretrained=False, **kwargs):
+    # DeiT-Small with relative position encoding on queries, keys and values (Contextual Product method)
+    rpe_config = get_rpe_config(
+        ratio=1.9,
+        method="product",
+        mode='ctx',
+        shared_head=True,
+        skip=1,
+        rpe_on='qkv',
+    )
+    return deit_small_patch16_64(pretrained=pretrained,
                                   rpe_config=rpe_config,
                                   **kwargs)
 

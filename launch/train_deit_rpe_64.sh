@@ -18,4 +18,4 @@ HPARAMS=${HPARAMS/'--weight-decay 0.1'/'--weight-decay 0.1'} # weight decay in t
 
 # ./distributed_train.sh 8 /fs/cml-datasets/ImageNet/ILSVRC2012 --model vit_tiny_patch16_64  --img-size 64 $HPARAMS
 # ./distributed_train.sh 8 /fs/cml-datasets/ImageNet/ILSVRC2012 --model vitpeg_tiny_patch16_64  --img-size 64 $HPARAMS
-./distributed_train.sh 8 /fs/cml-datasets/ImageNet/ILSVRC2012 --model deit_small_patch16_224_ctx_product_50_shared_qkv  --img-size 64 $HPARAMS
+./distributed_train.sh 8 /fs/cml-datasets/ImageNet/ILSVRC2012 --model deit_small_patch16_64_ctx_product_50_shared_qkv  --img-size 64 $HPARAMS

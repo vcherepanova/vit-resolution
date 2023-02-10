@@ -11,7 +11,15 @@ HPARAMS=${HPARAMS/'--aa rand-m15-n2-mstd0.5-inc1'/'--aa rand-m15-n2-mmax30'} # m
 HPARAMS=${HPARAMS/'--mixup 0.2'/'--mixup 0.5'} # increasing mixup strength to match with the big vision implementation
 HPARAMS=${HPARAMS/'--lr 0.03'/'--lr 0.001'} # modifying learning rate to be for training from scratch
 HPARAMS=${HPARAMS/'--weight-decay 0.1'/'--weight-decay 0.1'} # weight decay in timm is 1000x larger than the big vision weight decay due to implementation differences
+# need to add in script for untaring the file
 
+#mkdir /scratch0/pchiang/
+#mkdir /scratch0/pchiang/ILSVRC2012
+#rsync -av /fs/cml-datasets/ImageNet/ILSVRC2012/val /scratch0/pchiang/ILSVRC2012
+#rsync -av /fs/cml-datasets/ImageNet/ILSVRC2012/train /scratch0/pchiang/ILSVRC2012
+
+# ./distributed_train.sh 8 /scratch0/pchiang/ILSVRC2012 --model vit_tiny_patch16_64  --img-size 64 $HPARAMS
+./distributed_train.sh 8 /fs/cml-datasets/ImageNet/ILSVRC2012 --model vitpeg_tiny_patch16_64  --img-size 64 $HPARAMS  
 
 # ./distributed_train.sh 8 /fs/cml-datasets/ImageNet/ILSVRC2012 --model vit_tiny_patch16_64  --img-size 64 $HPARAMS
 # ./distributed_train.sh 8 /fs/cml-datasets/ImageNet/ILSVRC2012 --model vitpeg_tiny_patch16_64  --img-size 64 $HPARAMS  

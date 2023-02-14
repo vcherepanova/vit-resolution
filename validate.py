@@ -154,7 +154,7 @@ parser.add_argument('--weight-interpolation', type=str, default='bilinear',
 
 def validate(args):
     # might as well try to validate something
-    args.pretrained = args.pretrained or not args.checkpoint
+    #args.pretrained = args.pretrained or not args.checkpoint
     args.prefetcher = not args.no_prefetcher
 
     if torch.cuda.is_available():
@@ -189,6 +189,7 @@ def validate(args):
         set_fast_norm()
 
     # create model
+    print(args.pretrained)
     model = create_model(
         args.model,
         pretrained=args.pretrained,

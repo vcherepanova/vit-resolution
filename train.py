@@ -350,6 +350,7 @@ group = parser.add_argument_group('ViT resolution')
 group.add_argument('--diff-res-ckpt', type=str, default='',
                     help='checkpoint pretrained on a different resolution')
 
+
 def _parse_args():
     # Do we have a config file to parse?
     args_config, remaining = config_parser.parse_known_args()
@@ -368,8 +369,11 @@ def _parse_args():
 
 
 def main():
+
+
     utils.setup_default_logging()
     args, args_text = _parse_args()
+
 
     if torch.cuda.is_available():
         torch.backends.cuda.matmul.allow_tf32 = True
@@ -383,6 +387,7 @@ def main():
         _logger.info(
             'Training in distributed mode with multiple processes, 1 device per process.'
             f'Process {args.rank}, total {args.world_size}, device {args.device}.')
+        _logger.info(f'args are {args}')
     else:
         _logger.info(f'Training with a single process on 1 device ({args.device}).')
     assert args.rank >= 0
@@ -439,8 +444,8 @@ def main():
     )
     if args.diff_res_ckpt :
         _logger.info(f'Loading a checkpoint pretrained on a different resolution, checkpoint path: {args.diff_res_ckpt}')
-        # model.load_pretrained(args.diff_res_ckpt)
-        model.reset_pos_emb()
+        model.load_pretrained(args.diff_res_ckpt)
+        # model.reset_pos_emb()
 
     if args.num_classes is None:
         assert hasattr(model, 'num_classes'), 'Model must have `num_classes` attr if not set on cmd line/config.'

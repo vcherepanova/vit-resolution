@@ -15,6 +15,7 @@ HPARAMS=${HPARAMS/'--mixup 0.2'/'--mixup 0.5'} # increasing mixup strength to ma
 HPARAMS=${HPARAMS/'--lr 0.03'/'--lr 0.001'} # modifying learning rate to be for training from scratch
 HPARAMS=${HPARAMS/'--weight-decay 0.1'/'--weight-decay 0.1'} # weight decay in timm is 1000x larger than the big vision weight decay due to implementation differences
 
-./distributed_train.sh 4 /fs/cml-datasets/ImageNet/ILSVRC2012 --model vit_tiny_patch16_64  --img-size 64 $HPARAMS
-#./distributed_train.sh 8 /fs/cml-datasets/ImageNet/ILSVRC2012 --model vitpeg_tiny_patch16_64  --img-size 64 $HPARAMS
-#./distributed_train.sh 1 /fs/cml-datasets/ImageNet/ILSVRC2012 --model deit_small_patch16_64_ctx_product_50_shared_qkv  --img-size 64 #$HPARAMS
+./distributed_train.sh 4 /scratch0/vcherepa/ImageNet --model vit_tiny_patch16_64  --img-size 64 $HPARAMS
+#./distributed_train.sh 8 /scratch0/vcherepa/ImageNet --model vitpeg_tiny_patch16_64  --img-size 64 $HPARAMS
+#./distributed_train.sh 1 /scratch0/vcherepa/ImageNet --model deit_small_patch16_64_ctx_product_50_shared_qkv  --img-size 64 #$HPARAMS
+rm -r /scratch0/vcherepa

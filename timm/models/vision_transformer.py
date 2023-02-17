@@ -2030,3 +2030,24 @@ def deit_small_patch16_64_ctx_product_50_shared_qkv(pretrained=False, **kwargs):
                                   rpe_config=rpe_config,
                                   **kwargs)
 
+
+@register_model
+def vitpeg_tiny_patch16_64(pretrained=False, **kwargs):
+    """ ViT-Tiny (Vit-Ti/16) with positional encoding generator (peg)
+    """
+    if pretrained:
+        raise ValueError("pretrained argument is not supported for peg models")
+    model_kwargs = dict(peg_idxs=[0, 1, 2, 3, 4], patch_size=16, embed_dim=192, depth=12, num_heads=3, **kwargs)
+    model = _create_vision_transformer('vitpeg_tiny_patch16_64', pretrained=pretrained, **model_kwargs)
+    return model
+
+
+@register_model
+def vitpeg_small_patch16_64(pretrained=False, **kwargs):
+    """ ViT-Small (Vit-S/16) with positional encoding generator (peg)
+    """
+    if pretrained:
+        raise ValueError("pretrained argument is not supported for peg models")
+    model_kwargs = dict(peg_idxs=[0, 1, 2, 3, 4], patch_size=16, embed_dim=384, depth=12, num_heads=6, **kwargs)
+    model = _create_vision_transformer('vitpeg_tiny_patch16_64', pretrained=pretrained, **model_kwargs)
+    return model

@@ -540,6 +540,7 @@ def main():
             _logger.info('AMP not enabled. Training in float32.')
 
     # optionally resume from a checkpoint
+    print(os.getcwd())
     resume_epoch = None
     if args.resume:
         resume_epoch = resume_checkpoint(

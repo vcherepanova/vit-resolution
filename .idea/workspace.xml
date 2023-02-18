@@ -4,6 +4,8 @@
     <list default="true" id="6dbf0293-0af9-4482-8a91-d31289187fe1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/launch/train_vit_64.sh" beforeDir="false" afterPath="$PROJECT_DIR$/launch/train_vit_64.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/timm/models/vision_transformer.py" beforeDir="false" afterPath="$PROJECT_DIR$/timm/models/vision_transformer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +54,7 @@
       <workItem from="1673052633151" duration="2611000" />
       <workItem from="1673391372917" duration="27810000" />
       <workItem from="1673910566343" duration="5817000" />
-      <workItem from="1675835761867" duration="31982000" />
+      <workItem from="1675835761867" duration="51232000" />
     </task>
     <servers />
   </component>

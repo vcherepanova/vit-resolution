@@ -1869,7 +1869,6 @@ def vit_small_patch16_64(pretrained=False, **kwargs):
     return model
 
 @register_model
-<<<<<<< HEAD
 def deit_small_patch16_224(pretrained=False, **kwargs):
     model = VisionTransformerRPE(
         img_size=224, patch_size=16, embed_dim=384, depth=12, num_heads=6, mlp_ratio=4, qkv_bias=True,

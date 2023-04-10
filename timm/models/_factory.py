@@ -86,6 +86,11 @@ def create_model(
             # a valid pretrained_cfg argument takes priority over tag in model name
             pretrained_cfg = pretrained_tag
 
+    # (Pdb) model_name
+    # 'vit_small_patch16_384'
+    # (Pdb) pretrained_tag
+    # 'augreg_in1k'
+
     if not is_model(model_name):
         raise RuntimeError('Unknown model (%s)' % model_name)
 

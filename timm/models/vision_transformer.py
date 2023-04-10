@@ -709,7 +709,7 @@ def checkpoint_filter_fn(
         state_dict,
         model,
         adapt_layer_scale=False,
-        interpolation='bicubic',
+        interpolation='bicubic', ##########################
         antialias=True,
 ):
     """ convert patch embedding weight from manual patchify + linear proj to conv"""
@@ -851,9 +851,10 @@ default_cfgs = generate_default_cfgs({
         hf_hub_id='timm/',
         custom_load=True),
     'vit_small_patch16_384.augreg_in1k': _cfg(
-        url='https://storage.googleapis.com/vit_models/augreg/S_16-i1k-300ep-lr_0.001-aug_medium2-wd_0.1-do_0.0-sd_0.0--imagenet2012-steps_20k-lr_0.01-res_384.npz',
-        hf_hub_id='timm/',
-        custom_load=True, input_size=(3, 384, 384), crop_pct=1.0),
+        file='/cmlscratch/kong/projects/vit-resolution/output/val_0403/small-checkpoint-228.pth.tar',
+        custom_load=True, 
+        input_size=(3, 384, 384), 
+        crop_pct=1.0),
     'vit_tiny_patch16_64.augreg_in1k': _cfg(url='', input_size=(3, 64, 64), crop_pct=1.0),
     'vit_small_patch16_64.augreg_in1k': _cfg(url='', input_size=(3, 64, 64), crop_pct=1.0),
     'vit_base_patch32_224.augreg_in1k': _cfg(

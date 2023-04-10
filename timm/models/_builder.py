@@ -377,6 +377,10 @@ def build_model_with_cfg(
     if pruned:
         model = adapt_model_from_file(model, variant)
 
+    # {'url': '', 'file': '/cmlscratch/kong/projects/vit-resolution/output/val_0403/small-checkpoint-228.pth.tar', 'architecture': 'vit_small_patch16_384', 'tag': 'augreg_in1k', 'custom_load': True, 'input_size': (3, 384, 384), 'fixed_input_size': True, 'interpolation': 'bicubic', 'crop_pct': 1.0, 'crop_mode': 'center', 'mean': (0.5, 0.5, 0.5), 'std': (0.5, 0.5, 0.5), 'num_classes': 1000, 'pool_size': None, 'first_conv': 'patch_embed.proj', 'classifier': 'head'}
+    # import pdb
+    # pdb.set_trace()
+
     # For classification models, check class attr, then kwargs, then default to 1k, otherwise 0 for feats
     num_classes_pretrained = 0 if features else getattr(model, 'num_classes', kwargs.get('num_classes', 1000))
     if pretrained:
